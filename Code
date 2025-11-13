@@ -1,0 +1,63 @@
+# ============================================================
+# 🛍️ PRODUCT DESCRIPTION GENERATOR — Interactive UI (Colab)
+# Model: google/flan-t5-base | Author: Dharshika D S
+# ============================================================
+
+!pip install transformers sentencepiece --quiet
+
+from transformers import pipeline
+import time
+from IPython.display import clear_output, display, HTML
+
+# 🎨 Styled console interface
+def styled_print(title, text, color="#ff7b00"):
+    display(HTML(f"""
+    <div style='
+        background: #fefcf9;
+        border: 2px solid {color};
+        border-radius: 15px;
+        padding: 20px;
+        margin-top: 15px;
+        font-family: Poppins, sans-serif;
+        box-shadow: 0px 0px 15px rgba(0,0,0,0.08);'>
+        <h3 style='color:{color}; margin-bottom:10px;'>{title}</h3>
+        <p style='font-size:16px; line-height:1.6; color:#222;'>{text}</p>
+    </div>
+    """))
+
+# Initialize model
+clear_output()
+styled_print("🚀 Initializing Model", "Loading google/flan-t5-base... please wait ⏳")
+
+generator = pipeline("text2text-generation", model="google/flan-t5-base")
+
+clear_output()
+styled_print("✅ Model Ready", "Let's generate a stunning product description!")
+
+# ==== 🔹 Take input ====
+product_name = input("\n💡 Enter your product name: ").strip()
+
+# ==== 🔹 Create rich prompt ====
+prompt = f"""Write a captivating, marketing-friendly product description for '{product_name}'.
+Include its main features, benefits, target users, and persuasive reasons to buy it.
+Keep the tone elegant and professional."""
+
+# ==== 🔹 Generate ====
+styled_print("✨ Generating...", "Crafting your description with AI magic ✨")
+time.sleep(1.5)
+
+result = generator(
+    prompt,
+    max_new_tokens=180,
+    do_sample=True,
+    temperature=0.9,
+    top_p=0.95,
+    repetition_penalty=1.2
+)
+
+# ==== 🔹 Display result ====
+clear_output()
+styled_print("🟢 Product Name", product_name)
+styled_print("💬 Product Description", result[0]['generated_text'])
+
+print("\n🎉 Description successfully generated! You can copy and use it for marketing, websites, or brochures.")
